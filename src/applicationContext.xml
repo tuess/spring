@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd  "
+       default-autowire="byName">
+
+    <!--配置扫描器（为了注解的使用）base-package写的太模糊会导致运行很慢-->
+    <context:component-scan base-package="com.dao,com.service,com.aop,com.entity"/>
+
+    <!--开启注解对aop的支持-->
+    <aop:aspectj-autoproxy/>
+
+    <!--配置数据库相关-事务-从上到下三个依赖-->
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/test"/>
+        <property name="username" value="root"/>
+        <property name="password" value="157175"/>
+        <property name="maxActive" value="10"/>
+        <property name="maxIdle" value="6"/>
+    </bean>
+
+    <!--配置事务管理器transactionManager-核心-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!--增加对事务的支持-->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <!--该文件中产生的对象，被spring放入了ioc容器中-->
+    <bean id="student" class="com.entity.Student">
+        <property name="id" value="10001"/>
+        <property name="age" value="18"/>
+        <property name="name" value="zhangsan"/>
+    </bean>
+
+    <bean id="htmlCourse" class="com.course.HtmlCourse"/>
+
+    <bean id="javaCourse" class="com.course.JavaCourse"/>
+
+    <!--通过构造器赋值，需要类中有构造方法，用<constructor-arg value=""/>来赋值,，默认按照构造方法的顺序，要自己设置顺序需要加index属性或者name属性-->
+    <!--p标签赋值需要在头部引入一句话，xmlns:p="http://www.springframework.org/schema/p"，然后直接在bean标签之后写p:属性=“值”，引用类型需要在属性 加-ref-->
+    <!--<bean id="teacher" class="com.entity.Teacher" p:age="25" p:name="wang&lt;wu">-->
+       <!--&lt;!&ndash; <property name="name" value="zhangsan"/>-->
+        <!--<property name="age" value="23"/>-->
+        <!--&lt;!&ndash;<constructor-arg value="lisi"/>-->
+        <!--<constructor-arg value="24"/>&ndash;&gt;&ndash;&gt;-->
+    <!--</bean>-->
+
+    <!--在bean标签中写入autowrite属性值可以将引用过类型自动装配，必须有其它bean的id值=该类的应引用属性名-->
+    <!--<bean id="course" class="com.entity.Course" p:courseHour="300" p:courseName="golang">-->
+        <!--&lt;!&ndash;<property name="courseName" value="java"/>-->
+        <!--<property name="courseHour" value="200"/>-->
+        <!--&lt;!&ndash;property赋值，如果是简单类型，用value，如果是对象类型，用ref,因此实现了对象与对象之间迭代依赖关系&ndash;&gt;-->
+        <!--<property name="teacher" ref="teacher"/>-->
+        <!--&lt;!&ndash;<constructor-arg value="python"/>-->
+        <!--<constructor-arg value="100"/>-->
+        <!--<constructor-arg ref="teacher"/>&ndash;&gt;&ndash;&gt;-->
+    <!--</bean>-->
+
+    <!--ioc给各种集合赋值-->
+    <bean id="collection" class="com.entity.AllCollectionType">
+        <property name="array">
+            <array>
+                <value>篮球-array</value>
+                <value>足球-array</value>
+                <value>乒乓球-array</value>
+            </array>
+        </property>
+        <property name="list">
+            <list>
+                <value>篮球-list</value>
+                <value>足球-list</value>
+                <value>乒乓球-list</value>
+            </list>
+        </property>
+        <property name="set">
+            <set>
+                <value>篮球-set</value>
+                <value>足球-set</value>
+                <value>乒乓球-set</value>
+            </set>
+        </property>
+        <property name="map">
+            <map>
+                <entry key="basketball" value="篮球-map"/>
+                <entry key="football" value="足球-map" />
+                <entry key="pingpangball" value="乒乓球-map"/>
+            </map>
+        </property>
+        <property name="properties">
+            <props>
+                <prop key="basketball">篮球-properties</prop>
+                <prop key="football">足球-properties</prop>
+                <prop key="pingpangball">乒乓球-properties</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!--在StudentDaoImpl和StudentServiceImpl中加了注解，就不需要再用bean注册了，需要在开头加上default-autowire="byName"-->
+    <!--&lt;!&ndash;注册service层的StudentDaoImpl&ndash;&gt;-->
+    <!--<bean id="studentService" class="com.service.StudentServiceImpl">-->
+        <!--<property name="studentDao" ref="studentDao"/>-->
+    <!--</bean>-->
+
+    <!--&lt;!&ndash;注册dao层的StudentServiceImpl&ndash;&gt;-->
+    <!--<bean id="studentDao" class="com.dao.StudentDaoImpl"/>-->
+
+    <!--注册前置通知类-->
+    <bean id="logBefore" class="com.aop.LogBefore"/>
+
+    <!--注册后置通知类-->
+    <bean id="logAfter" class="com.aop.LogAfter"/>
+
+    <!--注册异常通知类-->
+    <bean id="logException" class="com.aop.LogException"/>
+
+    <!--注册环绕通知类-->
+    <bean id="logAround" class="com.aop.LogAround"/>
+
+    <!--aop（将通知所在类与通知进行关联）-->
+    <aop:config proxy-target-class="true">
+        <!--配置前置通知切入点（在哪里执行通知）-->
+        <aop:pointcut id="pointcut" expression="execution(public void com.service.StudentServiceImpl.deleteStudent()) or execution(public void com.service.StudentServiceImpl.addStudent(com.entity.Student))"/>
+        <!--链接切入点和切面的线-->
+        <aop:advisor advice-ref="logBefore" pointcut-ref="pointcut"/>
+    </aop:config>
+
+    <aop:config>
+        <!--后置通知切入点-->
+        <aop:pointcut id="pointcut1" expression="execution(public void com.service.StudentServiceImpl.deleteStudent())"/>
+        <aop:advisor advice-ref="logAfter" pointcut-ref="pointcut1"/>
+    </aop:config>
+
+    <aop:config>
+        <!--异常通知切入点-->
+        <aop:pointcut id="pointcut2" expression="execution(public void com.service.StudentServiceImpl.addStudent(com.entity.Student))"/>
+        <aop:advisor advice-ref="logException" pointcut-ref="pointcut2"/>
+    </aop:config>
+
+    <aop:config>
+        <!--环绕通知切入点-->
+        <aop:pointcut id="pointcut3" expression="execution(public * com.service.StudentServiceImpl.addStudent(com.entity.Student))"/>
+        <aop:advisor advice-ref="logAround" pointcut-ref="pointcut3"/>
+    </aop:config>
+
+    <!--配置schema形式的通知-->
+    <aop:config>
+        <aop:pointcut id="logschema1" expression="execution(public * com.service.StudentServiceImpl.addStudent(com.entity.Student))"/>
+        <aop:aspect ref="logschema">
+            <aop:before method="before" pointcut-ref="logschema1"/>
+            <aop:after-returning method="afterreturning" pointcut-ref="logschema1"/>
+        </aop:aspect>
+    </aop:config>
+
+</beans>

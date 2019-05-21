@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="lib">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/aopalliance-1.0.jar!/" />
+      <root url="jar://F:/Java jdk/spring-jar包/spring-framework-4.3.9.RELEASE-dist/spring-framework-4.3.9.RELEASE/libs/spring-aop-4.3.9.RELEASE-sources.jar!/" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/lib" recursive="false" />
+  </library>
+</component>
