@@ -1,5 +1,4 @@
 # spring
-spring学习笔记
 spring是基于ioc（控制反转）和aop（面向切面）的框架，搭建spring环境需要6个jarspring-aop.jar		开发AOP特性时需要的JAR
 spring-beans.jar	处理Bean的jar			<bean>
 spring-context.jar	处理spring上下文的jar		<context>
