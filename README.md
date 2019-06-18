@@ -102,9 +102,10 @@ service层注解：@Service
 当服务启动时（tomcat），通过监听器将SpringIOC容器初始化一次（该监听器 spring-web.jar已经提供）
 因此用spring开发web项目 至少需要7个jar： spring-java的6个jar + spring-web.jar，注意：web项目的jar包 是存入到WEB-INF/lib中。web项目启动时 ，会自动加载web.xml，因此需要在web.xml中加载 监听器（ioc容器初始化）。  
 Web项目启动时，启动实例化Ioc容器，在web.xml中配置：  
+```xml
  <!-- 指定 Ioc容器（applicationContext.xml）的位置-->
   <context-param>
-  		<!--  监听器的父类ContextLoader中有一个属性contextConfigLocation，该属性值 保存着 容器配置文件applicationContext.xml的位置 -->
+  		<!-- 监听器的父类ContextLoader中有一个属性contextConfigLocation，该属性值 保存着 容器配置文件applicationContext.xml的位置 -->
   		<param-name>contextConfigLocation</param-name>
   		<param-value>classpath:applicationContext.xml</param-value>
   </context-param>  
@@ -116,5 +117,6 @@ Web项目启动时，启动实例化Ioc容器，在web.xml中配置：
   	 -->
   	<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>  
+  ```
   
   具体步骤，jsp页面先请求一个servlet，该servlet要纳入spring的管理，在类中通过ioc容器将servlet要调用的service层注入给servlet，该service必须在servlet中有set方法，然后在servlet的init方法中获取此service实例，然后就和jsp中的正常操作一样了，调service拿数据，setAttribute，forward跳转等。
